@@ -19,7 +19,7 @@ ApplicationWindow {
     minimumWidth: windowWidth
     minimumHeight: minWindowHeight
     color: "#333333"
-    title: "TurtleCoin Nest"
+    title: "Xaria GUI"
     visible: true
 
     Flickable{
@@ -30,13 +30,13 @@ ApplicationWindow {
         width: parent.width
         height: parent.height
 
-        ScrollBar.vertical: ScrollBar {
+		ScrollBar.vertical: ScrollBar {
             width: 10
             anchors.right: parent.right
             anchors.rightMargin: 0
             policy: parent.height < windowHeight ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
         }
-
+		
         OpenWallet {
             id: openWalletScreen
             anchors.fill: parent

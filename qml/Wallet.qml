@@ -95,7 +95,8 @@ Rectangle {
             Text {
                 id: textLockedUnit
                 color: "#cfcfcf"
-                text: "TRTL"
+
+                text: "XARI"
                 anchors.right: parent.right
                 anchors.rightMargin: 18
                 anchors.bottom: parent.bottom
@@ -109,7 +110,8 @@ Rectangle {
             Text {
                 id: textAvailableUnit
                 color: "#cfcfcf"
-                text: "TRTL"
+                
+				text: "XARI"
                 font.family: "Arial"
                 font.pixelSize: 15
                 anchors.right: textLockedUnit.right
@@ -224,7 +226,8 @@ Rectangle {
         Text {
             id: textBalanceUnit
             color: "#ffffff"
-            text: "TRTL"
+            
+			text: "XARI"
             verticalAlignment: Text.AlignBottom
             anchors.left: textBalanceValue.right
             anchors.leftMargin: 15
@@ -391,7 +394,7 @@ Rectangle {
         Text {
             id: textDescrCopyAddress
             color: "#858585"
-            text: "Copy your address to receive TRTL"
+            text: "Copy your address to receive XARI"
             anchors.verticalCenter: buttonCopy.verticalCenter
             anchors.right: buttonCopy.left
             anchors.rightMargin: 15
@@ -574,7 +577,6 @@ Rectangle {
         property var transferAmount: ""
         property var transferPaymentID: ""
         property var transferFee: ""
-        property var nodeFeeValue: "0"
 
         Text {
             id: textTransferTitle
@@ -593,7 +595,7 @@ Rectangle {
         Text {
             id: textTransferAddrDescr
             color: "#ffffff"
-            text: "Recipient address (or integrated address)"
+            text: "Recipient address"
             anchors.top: textTransferTitle.bottom
             anchors.topMargin: 34
             anchors.left: parent.left
@@ -637,7 +639,7 @@ Rectangle {
                 onTextChanged: {
                     buttonSend.enabled = textInputTransferAmount.text != "" && textInputTransferAddress.text != ""
                     /* Disable payment ID input if integrated address */
-                    textInputTransferPaymentID.enabled = textInputTransferAddress.text.length != 187
+                    textInputTransferPaymentID.enabled = textInputTransferAddress.text.length != 186
                 }
             }
         }
@@ -695,7 +697,8 @@ Rectangle {
         Text {
             id: textTransferAmountUnit
             color: "#999999"
-            text: "TRTL"
+            
+			text: "XARI"
             anchors.verticalCenter: rectangleTextInputTransferAmount.verticalCenter
             horizontalAlignment: Text.AlignLeft
             font.pixelSize: 14
@@ -817,7 +820,7 @@ Rectangle {
         Text {
             id: textTransferFeeDescr
             color: "#ffffff"
-            text: "Network fee"
+            text: "Fee"
             anchors.top: rectangleTextInputTransferPaymentID.bottom
             anchors.topMargin: 13
             anchors.left: textTransferAddrDescr.left
@@ -862,7 +865,8 @@ Rectangle {
         Text {
             id: textTransferFeeUnit
             color: "#999999"
-            text: "TRTL"
+            
+			text: "XARI"
             anchors.verticalCenter: rectangleTextInputTransferFee.verticalCenter
             horizontalAlignment: Text.AlignLeft
             font.pixelSize: 14
@@ -874,59 +878,50 @@ Rectangle {
         }
 
         Text {
-            id: textNodeFeeTitle
-            color: "#ffffff"
-            text: "Node fee"
+            id: textTransferFeeDefaultDescr
+            color: "#999999"
+            text: "It is advised not to modify"
             anchors.top: textTransferFeeDescr.top
             anchors.topMargin: 0
-            anchors.left: textTransferFeeDescr.right
-            anchors.leftMargin: 80
-            verticalAlignment: Text.AlignBottom
-            font.pixelSize: 14
-            horizontalAlignment: Text.AlignLeft
-            font.bold: true
-            font.family: "Arial"
-        }
-
-        Text {
-            id: textNodeFeeDescr
-            color: "#999999"
-            text: "The node you connect\nto charges a fee of:"
-            anchors.right: parent.right
-            anchors.rightMargin: 5
-            anchors.top: textNodeFeeTitle.bottom
-            anchors.topMargin: 4
-            anchors.left: textNodeFeeTitle.left
-            anchors.leftMargin: 0
+            anchors.left: textTransferFeeUnit.right
+            anchors.leftMargin: 30
             font.pixelSize: 12
-            horizontalAlignment: Text.AlignLeft
             font.family: "Arial"
         }
 
-        Text {
-            id: textNodeFeeValue
-            color: "#cfcfcf"
-            text: rectangleTransfer.nodeFeeValue
-            font.pixelSize: 14
-            font.family: "Arial"
-            font.bold: true
-            anchors.bottom: textTransferFeeUnit.bottom
-            anchors.bottomMargin: 0
-            anchors.right: textNodeFeeUnit.left
-            anchors.rightMargin: 7
-        }
+        Button {
+            id: buttonFeeDefaultValues
+            text: "default value"
+            // anchors.horizontalCenter: textTransferFeeDefaultDescr.horizontalCenter
+            anchors.left: textTransferFeeDefaultDescr.left
+            anchors.leftMargin: 0
+            anchors.top: textTransferFeeDefaultDescr.bottom
+            anchors.topMargin: 8
+            height: 25
+            enabled: true
 
-        Text {
-            id: textNodeFeeUnit
-            color: "#999999"
-            text: "TRTL / tr."
-            font.pixelSize: 14
-            font.family: "Arial"
-            font.bold: true
-            anchors.bottom: textNodeFeeValue.bottom
-            anchors.topMargin: 0
-            anchors.right: parent.right
-            anchors.rightMargin: 10
+            contentItem: Text {
+                text: buttonFeeDefaultValues.text
+                font.pixelSize: 12
+                font.family: "Arial"
+                font.bold: true
+                opacity: enabled ? 1.0 : 0.3
+                color: buttonFeeDefaultValues.down ? "#dddddd" : "#ffffff"
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
+
+            background: Rectangle {
+                implicitWidth: 100
+                height: buttonFeeDefaultValues.height
+                opacity: enabled ? 1 : 0.3
+                radius: 6
+                color: buttonFeeDefaultValues.down ? "#383838" : "#444444"
+            }
+
+            onClicked: {
+                QmlBridge.getDefaultFeeAndDisplay();
+            }
         }
 
         Button {
@@ -970,7 +965,7 @@ Rectangle {
                     rectangleTransfer.transferPaymentID = "";
                 }
                 rectangleTransfer.transferFee = textInputTransferFee.text
-                dialogConfirmTransfer.show(rectangleTransfer.transferRecipient, rectangleTransfer.transferAmount + " TRTL + " + rectangleTransfer.transferFee + " (fee) + " + rectangleTransfer.nodeFeeValue + " (node fee)", rectangleTransfer.transferPaymentID);
+                dialogConfirmTransfer.show(rectangleTransfer.transferRecipient, rectangleTransfer.transferAmount + " XARI + " + rectangleTransfer.transferFee + " XARI (fee)", rectangleTransfer.transferPaymentID);
             }
         }
 
@@ -1279,10 +1274,6 @@ Rectangle {
 
         onDisplayDefaultFee: {
             textInputTransferFee.text = fee;
-        }
-
-        onDisplayNodeFee: {
-            rectangleTransfer.nodeFeeValue = nodeFee;
         }
 
         onClearTransferAmount: {

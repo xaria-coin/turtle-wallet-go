@@ -1,12 +1,12 @@
 package main
 
 const (
-	versionNest                 = "0.33"
-	urlCryptoCompareTRTL        = "https://min-api.cryptocompare.com/data/price?fsym=TRTL&tsyms=USD"
-	defaultRemoteDaemonAddress  = "public.turtlenode.io"
-	defaultRemoteDaemonPort     = "11898"
-	logFileFilename             = "TurtleCoin-Nest.log"
-	urlBlockExplorer            = "https://blocks.turtle.link/"
+	versionGUI                 = "0.01"
+	urlCryptoCompareXARI        = "http://xaria.xyz/price.json"
+	defaultRemoteDaemonAddress  = "node.xaria.xyz"
+	defaultRemoteDaemonPort     = "11966"
+	logFileFilename             = "xaria-GUI-logs.log"
+	urlBlockExplorer            = "http:/explorer.xaria.xyz"
 	dbFilename                  = "settings.db"
 	numberTransactionsToDisplay = 20
 )

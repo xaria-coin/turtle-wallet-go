@@ -1,47 +1,5 @@
 # Releases
 
-## 0.32
-
-### Release notes
-
-- Compatibility with new fees from remote nodes (if you connect to a remote node, the node can charge you a fee per transaction, as a compensation for their running costs).
-- Compatibility with core 0.8.0
-- Uses turtle-service and TurtleCoind 0.8.0.
-
-### Sha256
-
-TurtleCoin-Nest-0.32-Windows.zip:
-`0957dfcd42aa4fa3332d4419c888144cbf0fc0cd8f3ce4b3b2954e2d57dc9858`
-
-TurtleCoin-Nest-0.32-Mac.zip:
-`a84eb3d5e56e3bcae27c6688ba070a6a7393a4141b1aa7eb1217cc4082e7957e`
-
-TurtleCoin-Nest-0.32-Linux.tar.gz:
-`910cc9e8abc8cf55af43c908d9a456c88c659e03c3fda4679b08c78b9e094ca4`
-
-## 0.31
-
-### Release notes
-
-- Possibility to use local blockchain is re-enabled.
-- Possibility to send to integrated addresses
-- Fixed resolution on high res screens on Windows
-- Added scrollbar when window is smaller than nominal height
-- Uses turtle-service and TurtleCoind 0.7.0.
-
-Regarding the local blockchain option: TurtleCoind will be launched in the background if you did not launch it manually. Some difficulties can arise, please check the different log files to understand the problem (especially TurtleCoind-session.log) or ask some help in the discord. You will also avoid issues if you launch TurtleCoind manually before launching Nest (and potentially wait for sync). Please tell us if you have issues so we can improve for the next release. 
-
-### Sha256
-
-TurtleCoin-Nest-0.31-Windows.zip:
-`e3f6ad0f377528fd3e28d30a9ae9a8db69229f5ffd00a272993808db25ee49d6`
-
-TurtleCoin-Nest-0.31-Mac.zip:
-`f2325823c268be8b8bc3feeaece0f4d141a13e80a2cbbfe49b55420afa0baa98`
-
-TurtleCoin-Nest-0.31-Linux.tar.gz:
-`cf24f364a5abba8d6464e4e48d9700a7705d2c84163436818844ea5edfb1f223`
-
 ## 0.30
 
 ### Release notes

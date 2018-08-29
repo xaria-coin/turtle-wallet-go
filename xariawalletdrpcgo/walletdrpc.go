@@ -1,5 +1,6 @@
-// Package turtlecoinwalletdrpcgo handles the the rpc connection between your app and turtle-service
-package turtlecoinwalletdrpcgo
+// Package xariawalletdrpcgo handles the the rpc connection between your app and walletd
+package xariawalletdrpcgo
+
 
 import (
 	"bytes"
@@ -30,7 +31,7 @@ var (
 )
 
 // RequestBalance provides the available and locked balances of the current wallet
-// returned balances are expressed in TRTL, not in 0.01 TRTL
+// returned balances are expressed in XARI, not in 0.01 XARI
 func RequestBalance(rpcPassword string) (availableBalance float64, lockedBalance float64, totalBalance float64, err error) {
 
 	args := make(map[string]interface{})
@@ -112,7 +113,7 @@ func RequestListTransactions(blockCount int, firstBlockIndex int, addresses []st
 	return transfers, nil
 }
 
-// RequestStatus requests turtle-service connection and sync status
+// RequestStatus requests walletd connection and sync status
 func RequestStatus(rpcPassword string) (blockCount int, knownBlockCount int, peerCount int, err error) {
 
 	args := make(map[string]interface{})
@@ -131,11 +132,11 @@ func RequestStatus(rpcPassword string) (blockCount int, knownBlockCount int, pee
 }
 
 // SendTransaction makes a transfer with the provided information.
-// parameters amount and fee are expressed in TRTL, not 0.01 TRTL
+// parameters amount and fee are expressed in XARI, not 0.01 XARI
 func SendTransaction(addressRecipient string, amount float64, paymentID string, fee float64, mixin int, rpcPassword string) (transactionHash string, err error) {
 
-	amountInt := int(amount * 100) // expressed in hundredth of TRTL
-	feeInt := int(fee * 100)       // expressed in hundredth of TRTL
+	amountInt := int(amount * 100) // expressed in hundredth of XARI
+	feeInt := int(fee * 100)       // expressed in hundredth of XARI
 
 	args := make(map[string]interface{})
 	args["fee"] = feeInt
@@ -230,12 +231,12 @@ func SaveWallet(rpcPassword string) (err error) {
 }
 
 // EstimateFusion counts the number of unspent outputs of the specified addresses and returns how many of those outputs can be optimized. This method is used to understand if a fusion transaction can be created. If fusionReadyCount returns a value = 0, then a fusion transaction cannot be created.
-// threshold is the value that determines which outputs will be optimized. Only the outputs, lesser than the threshold value, will be included into a fusion transaction (threshold is expressed in TRTL, not 0.01 TRTL).
+// threshold is the value that determines which outputs will be optimized. Only the outputs, lesser than the threshold value, will be included into a fusion transaction (threshold is expressed in XARI, not 0.01 XARI).
 // fusionReadyCount is the number of outputs that can be optimized.
 // totalOutputCount is the total number of unspent outputs of the specified addresses.
 func EstimateFusion(threshold int, addresses []string, rpcPassword string) (fusionReadyCount int, totalOutputCount int, err error) {
 
-	threshold *= 100 // expressed in hundredth of TRTL
+	threshold *= 100 // expressed in hundredth of XARI
 
 	args := make(map[string]interface{})
 	args["threshold"] = threshold
@@ -254,11 +255,11 @@ func EstimateFusion(threshold int, addresses []string, rpcPassword string) (fusi
 }
 
 // SendFusionTransaction allows you to send a fusion transaction, by taking funds from selected addresses and transferring them to the destination address.
-// threshold is the value that determines which outputs will be optimized. Only the outputs, lesser than the threshold value, will be included into a fusion transaction (threshold is expressed in TRTL, not 0.01 TRTL).
-// parameters amount and fee are expressed in TRTL, not 0.01 TRTL
+// threshold is the value that determines which outputs will be optimized. Only the outputs, lesser than the threshold value, will be included into a fusion transaction (threshold is expressed in XARI, not 0.01 XARI).
+// parameters amount and fee are expressed in XARI, not 0.01 XARI
 func SendFusionTransaction(threshold int, mixin int, addresses []string, destinationAddress string, rpcPassword string) (transactionHash string, err error) {
 
-	threshold *= 100 // expressed in hundredth of TRTL
+	threshold *= 100 // expressed in hundredth of XARI
 
 	args := make(map[string]interface{})
 	args["threshold"] = threshold
@@ -278,54 +279,6 @@ func SendFusionTransaction(threshold int, mixin int, addresses []string, destina
 		return "", errors.Wrap(errors.New(responseError.(map[string]interface{})["message"].(string)), "response with error")
 	}
 	return responseMap["result"].(map[string]interface{})["transactionHash"].(string), nil
-}
-
-// Feeinfo returns info on the fee requested by the remote node for every transactions
-// returned fee is expressed in TRTL, not in 0.01 TRTL
-func Feeinfo(rpcPassword string) (address string, fee float64, status string, err error) {
-
-	args := make(map[string]interface{})
-
-	payload := rpcPayloadFeeinfo(0, rpcPassword, args)
-
-	responseMap, err := httpRequest(payload)
-	if err != nil {
-		return "", 0, "", errors.Wrap(err, "httpRequest failed")
-	}
-
-	responseError := responseMap["error"]
-	if responseError != nil {
-		return "", 0, "", errors.Wrap(errors.New(responseError.(map[string]interface{})["message"].(string)), "response with error")
-	}
-
-	result := responseMap["result"]
-
-	if result == nil {
-		return "", 0, "", errors.New("result from feeinfo request is nil")
-	}
-
-	resultAddress := result.(map[string]interface{})["address"]
-	if resultAddress != nil {
-		address = resultAddress.(string)
-	} else {
-		address = ""
-	}
-
-	resultAmount := result.(map[string]interface{})["amount"]
-	if resultAmount != nil {
-		fee = resultAmount.(float64) / 100
-	} else {
-		fee = 0
-	}
-
-	resultStatus := result.(map[string]interface{})["status"]
-	if resultStatus != nil {
-		status = resultStatus.(string)
-	} else {
-		status = ""
-	}
-
-	return address, fee, status, nil
 }
 
 func httpRequest(payload rpcPayload) (responseMap map[string]interface{}, err error) {

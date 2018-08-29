@@ -12,15 +12,15 @@ Dialog {
     standardButtons: StandardButton.Ok
     width: 900
 
-    property var addressDev: "TRTLv3jzutiQwqHL3qFwsu5EVLWesxZr1AFQ4AuMR3SD56n3rkHDkwj79eKwvaiU1nYQWGydKoXM6fXyiiGKsPDnVCNXzNdusxx"
-    property var websiteChat: "http://chat.turtlecoin.lol"
-    property var versionNest: ""
-    property var newVersionNestAvailable: ""
-    property var urlNewVersionNest: ""
+    property var addressDev: "Xaxyx7ez9gjD77ihPTaScZe2ezDHESyCa2gv2uQZ4ioJG7JsHzvwCyPURkhr8K4BcBL3Rcm4DHvm2BSA4F9RjYGz83G2KBbups"
+    property var websiteChat: "https://discord.gg/kDmqsZT"
+    property var versionGUI: ""
+    property var newVersionGUIAvailable: ""
+    property var urlNewVersionGUI: ""
 
     Text {
-        id: textNest
-        text: "Nest"
+        id: textGUI
+        text: "GUI"
         font.family: "Arial"
         font.pixelSize: 21
         font.bold: true
@@ -29,11 +29,11 @@ Dialog {
 
     Text {
         id: textVersion
-        text: "v. " + versionNest
+        text: "v. " + versionGUI
         font.family: "Arial"
         font.pixelSize: 13
-        anchors.horizontalCenter: textNest.horizontalCenter
-        anchors.top: textNest.bottom
+        anchors.horizontalCenter: textGUI.horizontalCenter
+        anchors.top: textGUI.bottom
         anchors.topMargin: 5
     }
 
@@ -41,14 +41,14 @@ Dialog {
         id: rectangleNewVersion
         width: parent.width
         height: 30
-        anchors.horizontalCenter: textNest.horizontalCenter
+        anchors.horizontalCenter: textGUI.horizontalCenter
         anchors.top: textVersion.bottom
         anchors.topMargin: 10
         color: "transparent"
 
         Text {
             id: textNewVersion
-            text: "New version (v. " + newVersionNestAvailable + ") is available. Download here"
+            text: "New version (v. " + newVersionGUIAvailable + ") is available. Download here"
             font.family: "Arial"
             font.pixelSize: 13
             font.bold: true
@@ -81,7 +81,7 @@ Dialog {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    QmlBridge.goToWebsite(urlNewVersionNest);
+                    QmlBridge.goToWebsite(urlNewVersionGUI);
                 }
             }
         }
@@ -140,7 +140,7 @@ Dialog {
 
     Text {
         id: textDescriptionDonate
-        text: "Donate to support Nest's dev"
+        text: "Donate to support Xaria's dev"
         font.family: "Arial"
         font.pixelSize: 13
         anchors.top: textHelp.bottom
@@ -199,11 +199,11 @@ Dialog {
     }
 
     function show() {
-        versionNest = QmlBridge.getVersion();
-        newVersionNestAvailable = QmlBridge.getNewVersion();
-        if (newVersionNestAvailable != "") {
+        versionGUI = QmlBridge.getVersion();
+        newVersionGUIAvailable = QmlBridge.getNewVersion();
+        if (newVersionGUIAvailable != "") {
             rectangleNewVersion.visible = true;
-            urlNewVersionNest = QmlBridge.getNewVersionURL();
+            urlNewVersionGUI = QmlBridge.getNewVersionURL();
         } else {
             rectangleNewVersion.visible = false;
         }

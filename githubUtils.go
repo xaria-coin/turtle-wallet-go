@@ -9,7 +9,7 @@ type release struct {
 	URL     string `json:"html_url"`
 }
 
-const url = "https://api.github.com/repos/turtlecoin/turtle-wallet-go/releases/latest"
+const url = "https://api.github.com/repos/xaria-coin/xaria-GUI/releases/latest"
 
 func checkIfNewReleaseAvailableOnGithub(currentVersion string) (newVersion string, urlNewVersion string) {
 

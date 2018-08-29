@@ -1,8 +1,8 @@
 package main
 
 import (
-	"TurtleCoin-Nest/turtlecoinwalletdrpcgo"
-	"TurtleCoin-Nest/walletdmanager"
+	"xaria-GUI/xariawalletdrpcgo"
+	"xaria-GUI/walletdmanager"
 	"database/sql"
 	"encoding/json"
 	"io"
@@ -31,7 +31,7 @@ import (
 var (
 	// qmlObjects = make(map[string]*core.QObject)
 	qmlBridge                   *QmlBridge
-	transfers                   []turtlecoinwalletdrpcgo.Transfer
+	transfers                   []xariawalletdrpcgo.Transfer
 	tickerRefreshWalletData     *time.Ticker
 	tickerRefreshConnectionInfo *time.Ticker
 	tickerSaveWallet            *time.Ticker
@@ -39,7 +39,7 @@ var (
 	useRemoteNode               = true
 	displayFiatConversion       = false
 	stringBackupKeys            = ""
-	rateUSDTRTL                 float64 // USD value for 1 TRTL
+	rateUSDXARI                 float64 // USD value for 1 XARI
 	remoteDaemonAddress         = defaultRemoteDaemonAddress
 	remoteDaemonPort            = defaultRemoteDaemonPort
 	limitDisplayedTransactions  = true
@@ -96,7 +96,6 @@ type QmlBridge struct {
 		remoteNodePort string) `signal:"displaySettingsRemoteDaemonInfo"`
 	_ func(fullBalance string)              `signal:"displayFullBalanceInTransferAmount"`
 	_ func(fee string)                      `signal:"displayDefaultFee"`
-	_ func(nodeFee string)                  `signal:"displayNodeFee"`
 	_ func(index int, confirmations string) `signal:"updateConfirmationsOfTransaction"`
 	_ func()                                `signal:"displayInfoDialog"`
 
@@ -125,7 +124,7 @@ type QmlBridge struct {
 		mnemonicSeed string,
 		confirmPasswordWallet string) `slot:"clickedButtonImport"`
 	_ func(remote bool)              `slot:"choseRemote"`
-	_ func(amountTRTL string) string `slot:"getTransferAmountUSD"`
+	_ func(amountXARI string) string `slot:"getTransferAmountUSD"`
 	_ func()                         `slot:"clickedCloseSettings"`
 	_ func()                         `slot:"clickedSettingsButton"`
 	_ func(displayFiat bool)         `slot:"choseDisplayFiat"`
@@ -160,7 +159,7 @@ func main() {
 			log.Fatal(err)
 		}
 		pathToHomeDir = usr.HomeDir
-		pathToAppFolder := pathToHomeDir + "/Library/Application Support/TurtleCoin-Nest"
+		pathToAppFolder := pathToHomeDir + "/Library/Application Support/xaria-GUI"
 		os.Mkdir(pathToAppFolder, os.ModePerm)
 		pathToLogFile = pathToAppFolder + "/" + logFileFilename
 		pathToDB = pathToAppFolder + "/" + pathToDB
@@ -187,10 +186,10 @@ func main() {
 
 	setupDB(pathToDB)
 
-	log.WithField("version", versionNest).Info("Application started")
+	log.WithField("version", versionGUI).Info("Application started")
 
 	go func() {
-		requestRateTRTL()
+		requestRateXARI()
 	}()
 
 	platform := "linux"
@@ -201,18 +200,15 @@ func main() {
 	}
 	walletdmanager.Setup(platform)
 
-	if isPlatformWindows {
-		// for scaling on windows high res screens
-		core.QCoreApplication_SetAttribute(core.Qt__AA_EnableHighDpiScaling, true)
-	}
-
+	core.QCoreApplication_SetAttribute(core.Qt__AA_EnableHighDpiScaling, true) // for scaling on windows high res screens
+	
 	app := gui.NewQGuiApplication(len(os.Args), os.Args)
 	app.SetWindowIcon(gui.NewQIcon5("qrc:/qml/images/icon.png"))
 
 	quickcontrols2.QQuickStyle_SetStyle("material")
 
 	engine := qml.NewQQmlApplicationEngine(nil)
-	engine.Load(core.NewQUrl3("qrc:/qml/nestmain.qml", 0))
+	engine.Load(core.NewQUrl3("qrc:/qml/GUImain.qml", 0))
 
 	qmlBridge = NewQmlBridge(nil)
 
@@ -228,7 +224,7 @@ func main() {
 	getAndDisplayStartInfoFromDB()
 
 	go func() {
-		newVersionAvailable, urlNewVersion = checkIfNewReleaseAvailableOnGithub(versionNest)
+		newVersionAvailable, urlNewVersion = checkIfNewReleaseAvailableOnGithub(versionGUI)
 		if newVersionAvailable != "" {
 			qmlBridge.DisplayInfoDialog()
 		}
@@ -239,7 +235,7 @@ func main() {
 	log.Info("Application closed")
 
 	walletdmanager.GracefullyQuitWalletd()
-	walletdmanager.GracefullyQuitTurtleCoind()
+	walletdmanager.GracefullyQuitXariad()
 }
 
 func connectQMLToGOFunctions() {
@@ -287,8 +283,8 @@ func connectQMLToGOFunctions() {
 		}()
 	})
 
-	qmlBridge.ConnectGetTransferAmountUSD(func(amountTRTL string) string {
-		return amountStringUSDToTRTL(amountTRTL)
+	qmlBridge.ConnectGetTransferAmountUSD(func(amountXARI string) string {
+		return amountStringUSDToXARI(amountXARI)
 	})
 
 	qmlBridge.ConnectClickedButtonBackupWallet(func() {
@@ -349,13 +345,17 @@ func connectQMLToGOFunctions() {
 		getFullBalanceAndDisplayInTransferAmount(transferFee)
 	})
 
+	qmlBridge.ConnectGetDefaultFeeAndDisplay(func() {
+		getDefaultFeeAndDisplay()
+	})
+
 	qmlBridge.ConnectLimitDisplayTransactions(func(limit bool) {
 		limitDisplayedTransactions = limit
 		getAndDisplayListTransactions(true)
 	})
 
 	qmlBridge.ConnectGetVersion(func() string {
-		return versionNest
+		return versionGUI
 	})
 
 	qmlBridge.ConnectGetNewVersion(func() string {
@@ -380,7 +380,6 @@ func startDisplayWalletInfo() {
 	getAndDisplayListTransactions(true)
 	getAndDisplayConnectionInfo()
 	getDefaultFeeAndDisplay()
-	getNodeFeeAndDisplay()
 
 	go func() {
 		tickerRefreshWalletData = time.NewTicker(time.Second * 30)
@@ -411,7 +410,7 @@ func getAndDisplayBalances() {
 	if err == nil {
 		qmlBridge.DisplayAvailableBalance(humanize.FormatFloat("#,###.##", walletAvailableBalance))
 		qmlBridge.DisplayLockedBalance(humanize.FormatFloat("#,###.##", walletLockedBalance))
-		balanceUSD := walletTotalBalance * rateUSDTRTL
+		balanceUSD := walletTotalBalance * rateUSDXARI
 		qmlBridge.DisplayTotalBalance(humanize.FormatFloat("#,###.##", walletTotalBalance), humanize.FormatFloat("#,###.##", balanceUSD))
 	}
 }
@@ -479,7 +478,7 @@ func getAndDisplayListTransactions(forceFullUpdate bool) {
 					amountString += "- "
 					amountString += strconv.FormatFloat(-amount, 'f', -1, 64)
 				}
-				amountString += " TRTL (fee: " + strconv.FormatFloat(transfer.Fee, 'f', 2, 64) + ")"
+				amountString += " XARI (fee: " + strconv.FormatFloat(transfer.Fee, 'f', 2, 64) + ")"
 				confirmationsString := confirmationsStringRepresentation(transfer.Confirmations)
 				timeString := transfer.Timestamp.Format("2006-01-02 15:04:05")
 				transactionNumberString := strconv.Itoa(transactionNumber) + ")"
@@ -504,7 +503,7 @@ func getAndDisplayListTransactions(forceFullUpdate bool) {
 
 func transfer(transferAddress string, transferAmount string, transferPaymentID string, transferFee string) {
 
-	log.Info("SEND: to: ", transferAddress, "  amount: ", transferAmount, "  payment ID: ", transferPaymentID, "  network fee: ", transferFee, "  node fee: ", walletdmanager.GetNodeFee())
+	log.Info("SEND: to: ", transferAddress, "  amount: ", transferAmount, "  payment ID: ", transferPaymentID, "  fee: ", transferFee)
 
 	transactionID, err := walletdmanager.SendTransaction(transferAddress, transferAmount, transferPaymentID, transferFee)
 	if err != nil {
@@ -518,12 +517,12 @@ func transfer(transferAddress string, transferAmount string, transferPaymentID s
 		return
 	}
 
-	log.Info("success transfer: ", transactionID)
+	log.Info("succes transfer: ", transactionID)
 
 	getAndDisplayBalances()
 	qmlBridge.ClearTransferAmount()
 	qmlBridge.FinishedSendingTransaction()
-	qmlBridge.DisplayPopup("TRTLs sent successfully", 4000)
+	qmlBridge.DisplayPopup("XARI sent successfully", 4000)
 }
 
 func optimizeWalletWithFusion() {
@@ -549,13 +548,13 @@ func startWalletWithWalletInfo(pathToWallet string, passwordWallet string) bool 
 
 	err := walletdmanager.StartWalletd(pathToWallet, passwordWallet, useRemoteNode, remoteDaemonAddress, remoteDaemonPort)
 	if err != nil {
-		log.Warn("error starting turtle-service with provided wallet info. error: ", err)
+		log.Warn("error starting walletd with provided wallet info. error: ", err)
 		qmlBridge.FinishedLoadingWalletd()
 		qmlBridge.DisplayErrorDialog("Error opening wallet.", err.Error())
 		return false
 	}
 
-	log.Info("success starting turtle-service")
+	log.Info("success starting walletd")
 
 	qmlBridge.FinishedLoadingWalletd()
 	startDisplayWalletInfo()
@@ -648,11 +647,6 @@ func getFullBalanceAndDisplayInTransferAmount(transferFee string) {
 func getDefaultFeeAndDisplay() {
 
 	qmlBridge.DisplayDefaultFee(humanize.FtoaWithDigits(walletdmanager.DefaultTransferFee, 2))
-}
-
-func getNodeFeeAndDisplay() {
-
-	qmlBridge.DisplayNodeFee(humanize.FtoaWithDigits(walletdmanager.GetNodeFee(), 2))
 }
 
 func saveRemoteDaemonInfo(daemonAddress string, daemonPort string) {
@@ -751,7 +745,7 @@ func getUseRemoteFromDB() bool {
 		}
 		useRemoteNode = useRemote
 	}
-
+	
 	return useRemoteNode
 }
 
@@ -845,8 +839,8 @@ func openBrowser(url string) bool {
 	return cmd.Start() == nil
 }
 
-func requestRateTRTL() {
-	response, err := http.Get(urlCryptoCompareTRTL)
+func requestRateXARI() {
+	response, err := http.Get(urlCryptoCompareXARI)
 
 	if err != nil {
 		log.Error("error fetching from cryptocompare: ", err)
@@ -861,18 +855,18 @@ func requestRateTRTL() {
 				log.Error("error JSON unmarshaling request cryptocompare: ", err)
 			} else {
 				resultsMap := resultInterface.(map[string]interface{})
-				rateUSDTRTL = resultsMap["USD"].(float64)
+				rateUSDXARI = resultsMap["USD"].(float64)
 			}
 		}
 	}
 }
 
-func amountStringUSDToTRTL(amountTRTLString string) string {
-	amountTRTL, err := strconv.ParseFloat(amountTRTLString, 64)
-	if err != nil || amountTRTL <= 0 || rateUSDTRTL == 0 {
+func amountStringUSDToXARI(amountXARIString string) string {
+	amountXARI, err := strconv.ParseFloat(amountXARIString, 64)
+	if err != nil || amountXARI <= 0 || rateUSDXARI == 0 {
 		return ""
 	}
-	amountUSD := amountTRTL * rateUSDTRTL
+	amountUSD := amountXARI * rateUSDXARI
 	amountUSDString := strconv.FormatFloat(amountUSD, 'f', 2, 64) + " $"
 	return amountUSDString
 }

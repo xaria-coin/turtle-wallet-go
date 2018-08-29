@@ -1,4 +1,4 @@
-package turtlecoinwalletdrpcgo
+package xariawalletdrpcgo
 
 // rpcPayload is the struct with the right formatting for passing to the post request
 type rpcPayload struct {
@@ -282,18 +282,6 @@ func rpcPayloadEstimateFusion(
 
 	return buildRPCPayload(
 		"estimateFusion",
-		id,
-		rpcPassword,
-		params)
-}
-
-func rpcPayloadFeeinfo(
-	id int,
-	rpcPassword string,
-	params map[string]interface{}) rpcPayload {
-
-	return buildRPCPayload(
-		"feeinfo",
 		id,
 		rpcPassword,
 		params)
