@@ -4,7 +4,7 @@ const (
 	// DefaultTransferFee is the default fee. It is expressed in XARI
 	DefaultTransferFee float64 = 0.1
 	// DefaultTransferMixin is the default mixin
-	DefaultTransferMixin = 4
+	DefaultTransferMixin = 2
 
 	logWalletdCurrentSessionFilename = "walletdCurrentSession.log"
 	logWalletdAllSessionsFilename    = "walletd.log"
