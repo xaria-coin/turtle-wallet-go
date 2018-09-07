@@ -195,7 +195,7 @@ Rectangle {
 
         Text {
             id: textBalance
-            color: "#ffffff"
+            color: "#b8529e"
             text: "BALANCE"
             verticalAlignment: Text.AlignBottom
             anchors.horizontalCenterOffset: 0
@@ -420,7 +420,7 @@ Rectangle {
 
         Text {
             id: textHistoryTitle
-            color: "#ffffff"
+            color: "#b8529e"
             text: "PREVIOUS TRANSACTIONS"
             anchors.top: parent.top
             anchors.topMargin: 10
@@ -580,7 +580,7 @@ Rectangle {
 
         Text {
             id: textTransferTitle
-            color: "#ffffff"
+            color: "#b8529e"
             text: "TRANSFER"
             font.pixelSize: 25
             horizontalAlignment: Text.AlignHCenter
@@ -927,6 +927,7 @@ Rectangle {
         Button {
             id: buttonSend
             text: "SEND"
+            checked: true
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 15

@@ -16,9 +16,9 @@ ApplicationWindow {
 
     width: windowWidth
     height: windowHeight
+    color: "#333333"
     minimumWidth: windowWidth
     minimumHeight: minWindowHeight
-    color: "#333333"
     title: "Xaria GUI"
     visible: true
 
@@ -47,7 +47,7 @@ ApplicationWindow {
                 y: 415
                 width: 163
                 height: 159
-                source: "images/icon.png"
+                source: "images/xariagui.png"
             }
         }
 

@@ -141,7 +141,7 @@ Rectangle {
 
         Text {
             id: textOpenExistingWalletDescr
-            color: "#ffffff"
+            color: "#b8529e"
             text: "Open an existing wallet"
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignBottom
@@ -275,12 +275,12 @@ Rectangle {
             enabled: false
 
             contentItem: Text {
+                color: "#b8529e"
                 text: buttonOpenWallet.text
                 font.bold: true
                 font.pointSize: 20
                 font.family: "Arial"
                 opacity: enabled ? 1.0 : 0.3
-                color: buttonOpenWallet.down ? "#dddddd" : "#ffffff"
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 elide: Text.ElideRight
@@ -329,7 +329,7 @@ Rectangle {
 
         Text {
             id: textCreateWalletDescr
-            color: "#ffffff"
+            color: "#b8529e"
             text: "Create a new wallet"
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignBottom
@@ -371,8 +371,8 @@ Rectangle {
                 id: textInputCreateWalletFilename
                 anchors.fill: parent
                 color: "#cfcfcf"
-                
-				text: "myFirstXARIWallet"
+
+                text: "myFirstXARIWallet"
                 rightPadding: 5
                 leftPadding: 5
                 selectionColor: "#eeeeee"
@@ -495,12 +495,12 @@ Rectangle {
             enabled: false
 
             contentItem: Text {
+                color: "#b8529e"
                 text: buttonCreateWallet.text
                 font.bold: true
                 font.pointSize: 20
                 font.family: "Arial"
                 opacity: enabled ? 1.0 : 0.3
-                color: buttonOpenWallet.down ? "#dddddd" : "#ffffff"
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 elide: Text.ElideRight
@@ -554,7 +554,7 @@ Rectangle {
 
         Text {
             id: textImportWalletDescr
-            color: "#ffffff"
+            color: "#b8529e"
             text: "Import wallet"
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignBottom
@@ -569,7 +569,7 @@ Rectangle {
 
         Text {
             id: textSwitchImportFromSeed
-            color: !switchImportFrom.checked ? "#ffffff" : "#cfcfcf"
+            color: "#c778b1"
             text: "from seed"
             anchors.right: switchImportFrom.left
             anchors.rightMargin: 4
@@ -594,7 +594,7 @@ Rectangle {
 
         Text {
             id: textSwitchImportFromKeys
-            color: switchImportFrom.checked ? "#ffffff" : "#cfcfcf"
+            color: "#c778b1"
             text: "from private keys"
             anchors.left: switchImportFrom.right
             anchors.leftMargin: 4
@@ -633,8 +633,8 @@ Rectangle {
             TextInput {
                 id: textInputImportWalletFilename
                 anchors.fill: parent
-                
-				color: "#cfcfcf"
+
+                color: "#cfcfcf"
                 text: "myXARIWallet"
                 rightPadding: 5
                 leftPadding: 5
@@ -902,12 +902,12 @@ Rectangle {
             enabled: false
 
             contentItem: Text {
+                color: "#b8529e"
                 text: buttonImportWallet.text
                 font.bold: true
                 font.pointSize: 20
                 font.family: "Arial"
                 opacity: enabled ? 1.0 : 0.3
-                color: buttonImportWallet.down ? "#dddddd" : "#ffffff"
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 elide: Text.ElideRight
@@ -955,7 +955,7 @@ Rectangle {
             rectangleTextInputImportWalletPrivateSpendKey.visible = !displaySeed
             textInputImportWalletPrivateSpendKey.text = ""
             textInputImportWalletPrivateSpendKey.enabled = !displaySeed
-        } 
+        }
     }
 
     FileDialog {
@@ -965,7 +965,7 @@ Rectangle {
         onAccepted: {
             textInputExistingWalletPath.text = dialogChooseWalletFile.fileUrl
         }
-        
+
         function show() {
             dialogChooseWalletFile.open()
         }
@@ -1074,3 +1074,8 @@ Rectangle {
         textInputImportWalletPrivateSpendKey.text = "";
     }
 }
+
+/*##^## Designer {
+    D{i:0;autoSize:true;height:480;width:640}
+}
+ ##^##*/

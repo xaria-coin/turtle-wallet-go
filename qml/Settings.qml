@@ -49,7 +49,7 @@ Rectangle {
 
     Text {
         id: textSettings
-        color: "#ffffff"
+        color: "#b8529e"
         text: "SETTINGS"
         anchors.horizontalCenterOffset: 0
         anchors.horizontalCenter: parent.horizontalCenter
