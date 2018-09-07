@@ -30,16 +30,25 @@ ApplicationWindow {
         width: parent.width
         height: parent.height
 
-		ScrollBar.vertical: ScrollBar {
+        ScrollBar.vertical: ScrollBar {
             width: 10
             anchors.right: parent.right
             anchors.rightMargin: 0
             policy: parent.height < windowHeight ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
         }
-		
+
         OpenWallet {
             id: openWalletScreen
             anchors.fill: parent
+
+            Image {
+                id: image
+                x: 837
+                y: 415
+                width: 163
+                height: 159
+                source: "images/icon.png"
+            }
         }
 
         Wallet {
