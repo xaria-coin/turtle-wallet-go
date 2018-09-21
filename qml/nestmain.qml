@@ -45,6 +45,13 @@ ApplicationWindow {
         OpenWallet {
             id: openWalletScreen
             anchors.fill: parent
+
+            Image {
+                id: image
+                x: 850
+                y: 431
+                source: "images/icon.png"
+            }
         }
 
         Wallet {
